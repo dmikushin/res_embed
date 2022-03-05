@@ -2,6 +2,8 @@
 
 Embed resources into binary with NASM and CMake in a cross-platform way (Linux, Windows and Mac support).
 
+Unlike [xxd_embed](https://github.com/dmikushin/xxd_embed.git), the files are included into an assembly file as a data directly, which is fast even for very large files.
+
 ## Example
 
 1. Add this `res_embed` project to your CMake project as a submodule:
