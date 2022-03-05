@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.1)
 
 project(res_embed)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+find_package(Nasm REQUIRED)
+
 enable_language(ASM_NASM)
 
 if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
