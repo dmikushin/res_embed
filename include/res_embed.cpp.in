@@ -1,0 +1,36 @@
+// Embed content into hex array for in-memory caching
+
+#include <cstring>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "res_embed.h"
+
+#define STR(val) #val
+
+using namespace std;
+
+namespace {
+
+extern "C" const char hex_content_@FILE_KEY_HASH@[];
+extern "C" const int hex_size_@FILE_KEY_HASH@;
+
+class AddFile_@FILE_KEY_HASH@
+{
+	const char* file_key;
+
+public :
+
+	AddFile_@FILE_KEY_HASH@() : file_key("@FILE_KEY@")
+	{
+		res::embed::add(file_key, reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
+			hex_size_@FILE_KEY_HASH@, STR(@FILE_MIME@));
+	};
+};
+
+} // namespace
+
+static AddFile_@FILE_KEY_HASH@ addFile_@FILE_KEY_HASH@;
+

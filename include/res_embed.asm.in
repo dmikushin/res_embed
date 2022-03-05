@@ -1,0 +1,10 @@
+; Embed content into hex array for in-memory caching
+
+global @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@
+global @OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@
+
+section .data
+@OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@:
+incbin "@FILE_PATH@"
+db 0
+@OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@ dd ($ - @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@)
