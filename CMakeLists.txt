@@ -17,6 +17,11 @@ set_property(TARGET res_embed PROPERTY CXX_STANDARD 11)
 target_include_directories(res_embed PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(res::embed ALIAS res_embed)
 
+add_library(res_embed_static STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/res_embed.cpp)
+set_property(TARGET res_embed_static PROPERTY CXX_STANDARD 11)
+target_include_directories(res_embed_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_library(res::embed::static ALIAS res_embed_static)
+
 set(CMAKE_CURRENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "" FORCE)
 
 # Convert file into a binary blob and embed it into a C++ source file.
