@@ -4,12 +4,16 @@ project(res_embed)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+if (MSVC)
 find_package(Nasm REQUIRED)
-
 enable_language(ASM_NASM)
-
 if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
 message(FATAL_ERROR "NASM assembler not found, please install NASM")
+endif()
+set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_SOURCE_DIR}/include/res_embed.nasm.in")
+else()
+enable_language(ASM-ATT)
+set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_SOURCE_DIR}/include/res_embed.gas.in")
 endif()
 
 add_library(res_embed SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/res_embed.cpp)
@@ -41,9 +45,13 @@ macro(res_embed FILE_KEY FILE_PATH SOURCES)
 		OUTPUT ${EMBED_FILE_PATH}
 		COMMAND ${CMAKE_COMMAND} -DCMAKE_CURRENT_INCLUDE_DIR=${CMAKE_CURRENT_INCLUDE_DIR} -DFILE_KEY=${FILE_KEY} -DFILE_PATH=${FILE_PATH} -DEMBED_FILE_PATH=${EMBED_FILE_PATH} -P ${CMAKE_CURRENT_INCLUDE_DIR}/../cmake/EmbedFile.cmake
 		COMMENT "Embedding file ${FILE_PATH} content"
-		DEPENDS "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.asm.in")
+		DEPENDS "${RES_EMBED_ASM_IN}")
 	set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES GENERATED TRUE)
-	set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM_NASM)
+	if (MSVC)
+		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM_NASM)
+	else()
+		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM-ATT)
+	endif()
 
 	# Submit the resulting source file for compilation
 	list(APPEND ${SOURCES} ${EMBED_FILE_PATH})

@@ -1,0 +1,14 @@
+# Embed content into hex array for in-memory caching
+
+.section .data
+.global @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@
+.type @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@, @object
+
+@OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@:
+.incbin "/home/kostasrotas/glazomer/res_embed/example/resource"
+
+.global @OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@
+.type @OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@, @object
+
+@OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@:
+.int @OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@ - @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@
