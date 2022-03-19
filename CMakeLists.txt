@@ -4,29 +4,30 @@ project(res_embed)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+set(CMAKE_CURRENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "" FORCE)
+
 if (MSVC)
 find_package(Nasm REQUIRED)
 enable_language(ASM_NASM)
 if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
 message(FATAL_ERROR "NASM assembler not found, please install NASM")
 endif()
-set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_SOURCE_DIR}/include/res_embed.nasm.in")
+set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
 else()
 enable_language(ASM-ATT)
-set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_SOURCE_DIR}/include/res_embed.gas.in")
+set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
 endif()
 
 add_library(res_embed SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/res_embed.cpp)
 set_property(TARGET res_embed PROPERTY CXX_STANDARD 11)
-target_include_directories(res_embed PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(res_embed PUBLIC ${CMAKE_CURRENT_INCLUDE_DIR})
 add_library(res::embed ALIAS res_embed)
 
 add_library(res_embed_static STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/res_embed.cpp)
 set_property(TARGET res_embed_static PROPERTY CXX_STANDARD 11)
-target_include_directories(res_embed_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set_property(TARGET res_embed_static PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_include_directories(res_embed_static PUBLIC ${CMAKE_CURRENT_INCLUDE_DIR})
 add_library(res::embed::static ALIAS res_embed_static)
-
-set(CMAKE_CURRENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "" FORCE)
 
 # Convert file into a binary blob and embed it into a C++ source file.
 macro(res_embed FILE_KEY FILE_PATH SOURCES)

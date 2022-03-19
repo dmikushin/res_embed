@@ -12,9 +12,9 @@ endif()
 get_filename_component(EMBED_FILE_EXT ${EMBED_FILE_PATH} LAST_EXT)
 
 if (MSVC)
-set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_LIST_DIR}/../include/res_embed.nasm.in")
+set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
 else()
-set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_LIST_DIR}/../include/res_embed.gas.in")
+set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
 endif()
 
 # Substitute encoded HEX content into template source file
