@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(CMAKE_CURRENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "" FORCE)
 
-if (MSVC)
+if (MSVC OR APPLE)
 find_package(Nasm REQUIRED)
 enable_language(ASM_NASM)
 if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
@@ -48,7 +48,7 @@ macro(res_embed FILE_KEY FILE_PATH SOURCES)
 		COMMENT "Embedding file ${FILE_PATH} content"
 		DEPENDS "${RES_EMBED_ASM_IN}")
 	set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES GENERATED TRUE)
-	if (MSVC)
+	if (MSVC OR APPLE)
 		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM_NASM)
 	else()
 		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM-ATT)

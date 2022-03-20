@@ -11,7 +11,7 @@ endif()
 
 get_filename_component(EMBED_FILE_EXT ${EMBED_FILE_PATH} LAST_EXT)
 
-if (MSVC)
+if (MSVC OR APPLE)
 set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
 else()
 set(RES_EMBED_ASM_IN "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
