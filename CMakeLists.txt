@@ -26,6 +26,7 @@ add_library(res::embed ALIAS res_embed)
 add_library(res_embed_static STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/res_embed.cpp)
 set_property(TARGET res_embed_static PROPERTY CXX_STANDARD 11)
 set_property(TARGET res_embed_static PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(res_embed_static PRIVATE RES_EMBED_STATIC)
 target_include_directories(res_embed_static PUBLIC ${CMAKE_CURRENT_INCLUDE_DIR})
 add_library(res::embed::static ALIAS res_embed_static)
 

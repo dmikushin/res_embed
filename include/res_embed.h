@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#ifdef _WIN32
-#ifdef incbin_EXPORTS
+#if defined(_WIN32) && !defined(RES_EMBED_STATIC)
+#ifdef res_embed_EXPORTS
 #define RES_EMBED_API __declspec(dllexport)
 #else
 #define RES_EMBED_API __declspec(dllimport)
