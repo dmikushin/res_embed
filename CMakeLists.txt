@@ -30,7 +30,7 @@ target_include_directories(res_embed_static PUBLIC ${CMAKE_CURRENT_INCLUDE_DIR})
 add_library(res::embed::static ALIAS res_embed_static)
 
 # Convert file into a binary blob and embed it into a C++ source file.
-macro(res_embed FILE_KEY FILE_PATH SOURCES)
+macro(res_embed tgt FILE_KEY FILE_PATH)
 	set(EMBED_FILE_CPP_PATH "${CMAKE_CURRENT_BINARY_DIR}/${FILE_KEY}.cpp")
 	add_custom_command(
 		OUTPUT ${EMBED_FILE_CPP_PATH}
@@ -39,7 +39,7 @@ macro(res_embed FILE_KEY FILE_PATH SOURCES)
 		DEPENDS "${CMAKE_CURRENT_INCLUDE_DIR}/res_embed.cpp.in")
 	set_source_files_properties("${EMBED_FILE_CPP_PATH}" PROPERTIES GENERATED TRUE) 
 
-	list(APPEND ${SOURCES} ${EMBED_FILE_CPP_PATH})
+	target_sources(${tgt} PRIVATE ${EMBED_FILE_CPP_PATH})
 
 	set(EMBED_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${FILE_KEY}.asm")
 	add_custom_command(
@@ -55,9 +55,11 @@ macro(res_embed FILE_KEY FILE_PATH SOURCES)
 	endif()
 
 	# Submit the resulting source file for compilation
-	list(APPEND ${SOURCES} ${EMBED_FILE_PATH})
+	target_sources(${tgt} PRIVATE ${EMBED_FILE_PATH})
 
-	message(STATUS "Source file ${EMBED_FILE_PATH} shall be added to ${SOURCES}")
+	target_link_libraries(${tgt} res::embed)
+
+	message(STATUS "Resource file ${EMBED_FILE_PATH} shall be added to target ${tgt}")
 endmacro()
 
 add_subdirectory(example)

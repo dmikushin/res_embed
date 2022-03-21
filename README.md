@@ -2,7 +2,7 @@
 
 Embed resources into binary with NASM and CMake in a cross-platform way (Linux, Windows and Mac support).
 
-Unlike [xxd_embed](https://github.com/dmikushin/xxd_embed.git), the files are included into an assembly file as a data directly, which is fast even for very large files.
+Unlike [xxd_embed](https://github.com/dmikushin/xxd_embed.git), the files are included into an assembly file as a data directly, which is fast even for very large files. In order to compile the assembly file, NASM is deployed on Windows/MacOS, and GNU AS on all other platforms.
 
 ## Example
 
@@ -27,11 +27,8 @@ Hello, world!
 ```
 
 ```cmake
-set(SRCS "example.cpp")
-res_embed("resource", ${CMAKE_CURRENT_SOURCE_DIR}/resource SRCS)
-
-add_executable(example ${SRCS})
-target_link_libraries(example res::embed)
+add_executable(res_example "example.cpp")
+res_embed(res_example "resource" ${CMAKE_CURRENT_SOURCE_DIR}/resource)
 ```
 
 4. Use the embedded resource in your program:
