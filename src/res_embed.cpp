@@ -23,7 +23,9 @@ void res::embed::add(const string& name, const char* content, size_t size, const
 	if (!index.get())
 		index.reset(new map<string, tuple<const char*, size_t, string> >());
 
-	index->emplace(name, std::make_tuple(content, size, mime));
+	auto it = index->find(name);
+	if (it == index->end())
+		index->emplace(name, std::make_tuple(content, size, mime));
 }
 
 const char* res::embed::get(const string& name, size_t* size, string* mime)
@@ -32,7 +34,8 @@ const char* res::embed::get(const string& name, size_t* size, string* mime)
 	{
 		fprintf(stderr, "The resources index maintained by RES::EMBED is not [yet] initialized\n"
 			"Perhaps, the resource load is attempted by a static object, which is initialized earlier than the RES::EMBED index\n"
-			"Please make sure this is not the case\n");
+			"Please make sure this is not the case. Otherwise, you can initialize one particular resource manually\n"
+			"by calling res::embed::init::%s()\n", name.c_str());
 		return nullptr;
 	}
 

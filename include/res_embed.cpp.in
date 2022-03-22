@@ -19,13 +19,11 @@ extern "C" const int hex_size_@FILE_KEY_HASH@;
 
 class AddFile_@FILE_KEY_HASH@
 {
-	const char* file_key;
-
 public :
 
-	AddFile_@FILE_KEY_HASH@() : file_key("@FILE_KEY@")
+	AddFile_@FILE_KEY_HASH@()
 	{
-		res::embed::add(file_key, reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
+		res::embed::add("@FILE_KEY@", reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
 			hex_size_@FILE_KEY_HASH@, STR(@FILE_MIME@));
 	};
 };
@@ -33,4 +31,22 @@ public :
 } // namespace
 
 static AddFile_@FILE_KEY_HASH@ addFile_@FILE_KEY_HASH@;
+
+namespace res {
+
+namespace embed {
+
+namespace init {
+
+void @FILE_KEY@()
+{
+	res::embed::add("@FILE_KEY@", reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
+		hex_size_@FILE_KEY_HASH@, STR(@FILE_MIME@));
+}
+
+} // namespace init
+
+} // namespace embed
+
+} // namespace res
 
