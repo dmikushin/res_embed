@@ -17,6 +17,8 @@
 #endif
 
 #include <string>
+#include <tuple>
+#include <vector>
 
 namespace res {
 
@@ -27,6 +29,9 @@ void RES_EMBED_API add(const std::string& name, const char* content, size_t size
 
 // Get an entry from the index of embedded resources.
 const char* RES_EMBED_API get(const std::string& name, size_t* size = nullptr, std::string* mime = nullptr);
+
+// Get all entries from the index of embedded resources.
+std::vector<std::tuple<std::string, const char*, size_t, std::string> > get_all();
 
 } // namespace embed
 

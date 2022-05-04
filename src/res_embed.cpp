@@ -49,3 +49,23 @@ const char* res::embed::get(const string& name, size_t* size, string* mime)
 	return std::get<0>(result);
 }
 
+std::vector<std::tuple<std::string, const char*, size_t, std::string> > res::embed::get_all()
+{
+	std::vector<std::tuple<std::string, const char*, size_t, std::string> > list;
+
+	if (!index.get())
+	{
+		fprintf(stderr, "The resources index maintained by RES::EMBED is not [yet] initialized\n"
+			"Perhaps, the resource load is attempted by a static object, which is initialized earlier than the RES::EMBED index\n"
+			"Please make sure this is not the case. Otherwise, you can initialize one particular resource manually\n"
+			"by calling res::embed::init::<resource_name>()\n");
+		return list;
+	}
+
+	for (auto& it : *index)
+		list.emplace_back(it.first, std::get<0>(it.second),
+			std::get<1>(it.second), std::get<2>(it.second));
+
+	return list;
+}
+
