@@ -1,3 +1,5 @@
+cmake_policy(SET CMP0057 NEW)
+
 set(CMAKE_CURRENT_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/../include)
 
 if (MSVC OR APPLE)
@@ -40,10 +42,15 @@ macro(res_embed tgt FILE_KEY FILE_PATH)
 	# Submit the resulting source file for compilation
 	target_sources(${tgt} PRIVATE ${EMBED_FILE_PATH})
 
+	get_target_property(LINKED_LIBRARIES ${tgt} LINK_LIBRARIES)
 	if (RES_EMBED_USE_SHARED)
-		target_link_libraries(${tgt} res::embed)
+		if (NOT ("res::embed" IN_LIST LINKED_LIBRARIES))
+			target_link_libraries(${tgt} res::embed)
+		endif()
 	else()
-		target_link_libraries(${tgt} res::embed::static)
+		if (NOT ("res::embed::static" IN_LIST LINKED_LIBRARIES))
+			target_link_libraries(${tgt} res::embed::static)
+		endif()
 	endif()
 
 	message(STATUS "Resource file ${EMBED_FILE_PATH} shall be added to target ${tgt}")
