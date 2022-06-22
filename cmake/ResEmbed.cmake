@@ -40,7 +40,8 @@ macro(res_embed tgt FILE_KEY FILE_PATH)
 	endif()
 
 	# Submit the resulting source file for compilation
-	target_sources(${tgt} PRIVATE ${EMBED_FILE_PATH})
+	add_library(${tgt}_${FILE_KEY} STATIC ${EMBED_FILE_PATH})
+	target_link_libraries(${tgt} ${tgt}_${FILE_KEY})
 
 	get_target_property(LINKED_LIBRARIES ${tgt} LINK_LIBRARIES)
 	if (RES_EMBED_USE_SHARED)
