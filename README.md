@@ -42,7 +42,7 @@ res_embed(res_example "resource" ${CMAKE_CURRENT_SOURCE_DIR}/resource)
 
 int main(int argc, char* argv[])
 {
-	printf("%s", res_embed::get("resource"));
+	printf("%s", res::embed::get("resource"));
 	return 0;
 }
 ```
