@@ -41,6 +41,7 @@ macro(res_embed tgt FILE_KEY FILE_PATH)
 
 	# Submit the resulting source file for compilation
 	add_library(${tgt}_${FILE_KEY} STATIC ${EMBED_FILE_PATH})
+	set_target_properties(${tgt}_${FILE_KEY} PROPERTIES LINKER_LANGUAGE C)
 	target_link_libraries(${tgt} ${tgt}_${FILE_KEY})
 
 	get_target_property(LINKED_LIBRARIES ${tgt} LINK_LIBRARIES)
