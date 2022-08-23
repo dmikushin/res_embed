@@ -18,8 +18,8 @@ endif()
 macro(res_embed)
 	set(oneValueArgs TARGET NAME PATH)
 	set(multiValueArgs DEPENDS)
-	set(EMBED_FILE_CPP_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}.cpp")
 	cmake_parse_arguments(RES_EMBED "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+	set(EMBED_FILE_CPP_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}.cpp")
 
 	add_custom_command(
 		OUTPUT ${EMBED_FILE_CPP_PATH}
