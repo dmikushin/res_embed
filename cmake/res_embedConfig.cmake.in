@@ -1,0 +1,25 @@
+@PACKAGE_INIT@
+
+if(TARGET @_alias_name@)
+  # Protect against double definitions due to previous call or
+  # add_subdirectory()
+  return()
+endif()
+
+# ==============================================================================
+
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+# ------------------------------------------------------------------------------
+
+include(${CMAKE_CURRENT_LIST_DIR}/res_embedTargets.cmake)
+
+# For convenience
+if(NOT TARGET res::embed AND TARGET @_namespace@res_embed)
+  add_library(res::embed ALIAS @_namespace@res_embed)
+endif()
+if(NOT TARGET res::embed::static AND TARGET @_namespace@res_embed_static)
+  add_library(res::embed::static ALIAS @_namespace@res_embed_static)
+endif()
+
+# ==============================================================================
