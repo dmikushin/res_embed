@@ -20,6 +20,20 @@ if(has_parent)
       PARENT_SCOPE)
 endif()
 
+# ------------------------------------------------------------------------------
+
+include(GNUInstallDirs)
+
+set(RE_INSTALL_BINDIR "${CMAKE_INSTALL_BINDIR}")
+set(RE_INSTALL_SBINDIR "${CMAKE_INSTALL_SBINDIR}")
+set(RE_INSTALL_SYSCONFDIR "${CMAKE_INSTALL_SYSCONFDIR}")
+set(RE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/res_embed")
+set(RE_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/res_embed")
+set(RE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/res_embed")
+set(RE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATADIR}/doc/res_embed")
+set(RE_INSTALL_CMAKEDIR "${RE_INSTALL_DATADIR}/cmake")
+set(RE_INSTALL_3RDPARTYDIR "${RE_INSTALL_LIBDIR}/third_party")
+
 # ==============================================================================
 
 if(BUILD_SHARED_LIBS)
@@ -44,20 +58,6 @@ if(NOT TARGET ${_tgt_name})
 endif()
 
 # ==============================================================================
-
-include(GNUInstallDirs)
-
-set(RE_INSTALL_BINDIR "${CMAKE_INSTALL_BINDIR}")
-set(RE_INSTALL_SBINDIR "${CMAKE_INSTALL_SBINDIR}")
-set(RE_INSTALL_SYSCONFDIR "${CMAKE_INSTALL_SYSCONFDIR}")
-set(RE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/res_embed")
-set(RE_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/res_embed")
-set(RE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/res_embed")
-set(RE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATADIR}/doc/res_embed")
-set(RE_INSTALL_CMAKEDIR "${RE_INSTALL_DATADIR}/cmake")
-set(RE_INSTALL_3RDPARTYDIR "${RE_INSTALL_LIBDIR}/third_party")
-
-# ------------------------------------------------------------------------------
 
 include(CMakePackageConfigHelpers)
 
