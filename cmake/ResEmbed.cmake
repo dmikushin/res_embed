@@ -6,10 +6,12 @@ endif()
 
 set(_RES_EMBED_PATH ${CMAKE_CURRENT_LIST_DIR})
 
-if(MSVC OR APPLE OR MINGW OR CYGWIN OR MSYS)
-  set(USE_NASM TRUE)
-else()
-  set(USE_NASM FALSE)
+if(NOT DEFINED USE_NASM)
+  if(MSVC OR APPLE OR MINGW OR CYGWIN OR MSYS)
+    set(USE_NASM TRUE)
+  else()
+    set(USE_NASM FALSE)
+  endif()
 endif()
 
 if (USE_NASM)
