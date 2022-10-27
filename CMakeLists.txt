@@ -10,6 +10,11 @@ option(BUILD_SHARED_LIBS
 
 option(BUILD_EXAMPLE "Build the examples (default: ON)" ON)
 
+if(NOT DEFINED ITERATOR_DEBUG_VALUE)
+  set(ITERATOR_DEBUG_VALUE 0)
+endif()
+option(MSVC_ITERATOR_DEBUG "Define _ITERATOR_DEBUG_LEVEL (defaults to 0, can be set using ITERATOR_DEBUG_VALUE)" OFF)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Only modify the parent's CMAKE_MODULE_PATH if it exists
@@ -55,6 +60,9 @@ if(NOT TARGET ${_tgt_name})
     ${_tgt_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
                         $<INSTALL_INTERFACE:${RE_INSTALL_INCLUDEDIR}>)
   add_library(${_alias_name} ALIAS ${_tgt_name})
+  if(MSVC AND MSVC_ITERATOR_DEBUG)
+    target_compile_definitions(${_tgt_name} PUBLIC _ITERATOR_DEBUG=${ITERATOR_DEBUG_VALUE})
+  endif()
 endif()
 
 # ==============================================================================
