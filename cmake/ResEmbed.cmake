@@ -16,6 +16,12 @@ set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
 else()
 enable_language(ASM-ATT)
 set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
+if (CYGWIN)
+# On Cygwin, we still use GNU as AT&T template, but
+# with the .type directive commented out.
+# See https://stackoverflow.com/a/40452809
+set(NO_TYPE_FOR_PECOFF "#")
+endif()
 endif()
 
 # Convert file into a binary blob and embed it into a C++ source file.
@@ -38,7 +44,7 @@ macro(res_embed)
 	set(EMBED_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}.asm")
 	add_custom_command(
 		OUTPUT ${EMBED_FILE_PATH}
-		COMMAND ${CMAKE_COMMAND} -DCMAKE_CURRENT_INCLUDE_DIR=${RES_EMBED_CURRENT_INCLUDE_DIR} -DFILE_KEY=${RES_EMBED_NAME} -DFILE_PATH=${RES_EMBED_PATH} -DEMBED_FILE_PATH=${EMBED_FILE_PATH} -DRES_EMBED_ASM_IN=${RES_EMBED_ASM_IN} -P ${_RES_EMBED_PATH}/EmbedFile.cmake
+		COMMAND ${CMAKE_COMMAND} -DCMAKE_CURRENT_INCLUDE_DIR=${RES_EMBED_CURRENT_INCLUDE_DIR} -DFILE_KEY=${RES_EMBED_NAME} -DFILE_PATH=${RES_EMBED_PATH} -DEMBED_FILE_PATH=${EMBED_FILE_PATH} -DRES_EMBED_ASM_IN=${RES_EMBED_ASM_IN} -DNO_TYPE_FOR_PECOFF=${NO_TYPE_FOR_PECOFF} -P ${_RES_EMBED_PATH}/EmbedFile.cmake
 		COMMENT "Embedding file ${RES_EMBED_PATH} content identified by key ${RES_EMBED_NAME}"
 		DEPENDS "${RES_EMBED_ASM_IN}" "${EMBED_FILE_CPP_PATH}")
 	set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES GENERATED TRUE)
