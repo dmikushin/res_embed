@@ -24,8 +24,10 @@ set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
 else()
 enable_language(ASM-ATT)
 set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
-if (CYGWIN)
-# On Cygwin, we still use GNU as AT&T template, but
+execute_process(COMMAND uname OUTPUT_VARIABLE uname)
+if (CYGWIN OR uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
+# On Cygwin/MSYS/MINGW,
+# we still use GNU as AT&T template, but
 # with the .type directive commented out.
 # See https://stackoverflow.com/a/40452809
 set(NO_TYPE_FOR_PECOFF "#")
