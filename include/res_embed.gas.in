@@ -1,5 +1,5 @@
 # Embed content into hex array for in-memory caching
-.att_mnemonic
+# .att_mnemonic
 
 .section .data
 .global @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@
