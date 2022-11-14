@@ -1,6 +1,6 @@
-# Embed resources into binary with NASM and CMake
+# Embed resources into CMake targets in a cross-platform way
 
-Embed resources into binary with NASM and CMake in a cross-platform way (Linux, Windows and Mac support).
+Embed resources into a binary using CMake, C/C++ and assembler compilers depending on the target platfrom (Linux, Windows and MacOS are supported).
 
 Unlike [xxd_embed](https://github.com/dmikushin/xxd_embed.git), the files are included into an assembly file as a data directly, which is fast even for very large files. In order to compile the assembly file, NASM is deployed on Windows/MacOS, and GNU AS on all other platforms.
 
