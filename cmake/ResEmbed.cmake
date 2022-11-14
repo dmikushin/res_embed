@@ -21,9 +21,11 @@ if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
 message(FATAL_ERROR "NASM assembler not found, please install NASM")
 endif()
 set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
+set(RES_EMBED_ASM_EXT ".nasm")
 else()
-enable_language(ASM-ATT)
+enable_language(ASM)
 set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
+set(RES_EMBED_ASM_EXT ".s")
 execute_process(COMMAND uname OUTPUT_VARIABLE uname)
 if (CYGWIN OR uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
 # On Cygwin/MSYS/MINGW,
@@ -51,7 +53,7 @@ macro(res_embed)
 
 	target_sources(${RES_EMBED_TARGET} PRIVATE ${EMBED_FILE_CPP_PATH})
 
-	set(EMBED_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}.asm")
+	set(EMBED_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}${RES_EMBED_ASM_EXT}")
 	add_custom_command(
 		OUTPUT ${EMBED_FILE_PATH}
 		COMMAND ${CMAKE_COMMAND} -DCMAKE_CURRENT_INCLUDE_DIR=${RES_EMBED_CURRENT_INCLUDE_DIR} -DFILE_KEY=${RES_EMBED_NAME} -DFILE_PATH=${RES_EMBED_PATH} -DEMBED_FILE_PATH=${EMBED_FILE_PATH} -DRES_EMBED_ASM_IN=${RES_EMBED_ASM_IN} -DNO_TYPE_FOR_PECOFF=${NO_TYPE_FOR_PECOFF} -P ${_RES_EMBED_PATH}/EmbedFile.cmake
@@ -64,7 +66,7 @@ macro(res_embed)
 	if (USE_NASM)
 		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM_NASM)
 	else()
-		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM-ATT)
+		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM)
 	endif()
 
 	# Submit the resulting source file for compilation
