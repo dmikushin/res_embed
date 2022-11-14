@@ -26,9 +26,8 @@ else()
 enable_language(ASM)
 set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.gas.in")
 set(RES_EMBED_ASM_EXT ".s")
-execute_process(COMMAND uname OUTPUT_VARIABLE uname)
-if (CYGWIN OR uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
-# On Cygwin/MSYS/MINGW,
+if (WIN32 OR CYGWIN OR MSYS OR MINGW)
+# On WIN32/Cygwin/MSYS/MINGW,
 # we still use GNU as AT&T template, but
 # with the .type directive commented out.
 # See https://stackoverflow.com/a/40452809
