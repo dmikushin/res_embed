@@ -92,6 +92,6 @@ macro(res_embed)
 		endif()
 	endif()
 
-	message(STATUS "Resource file ${EMBED_FILE_PATH} shall be added to target ${RES_EMBED_TARGET}")
+	message(STATUS "Resource file ${RES_EMBED_PATH} shall be added to target ${RES_EMBED_TARGET}")
 endmacro()
 
