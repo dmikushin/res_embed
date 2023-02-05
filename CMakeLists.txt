@@ -6,7 +6,7 @@ project(
   LANGUAGES C CXX)
 
 option(BUILD_SHARED_LIBS
-       "Build and use shared library for res_embed (default: OFF)" OFF)
+       "Build and use shared library for ${PROJECT_NAME} (default: OFF)" OFF)
 
 option(BUILD_EXAMPLE "Build the examples (default: ON)" ON)
 
@@ -32,27 +32,27 @@ include(GNUInstallDirs)
 set(RE_INSTALL_BINDIR "${CMAKE_INSTALL_BINDIR}")
 set(RE_INSTALL_SBINDIR "${CMAKE_INSTALL_SBINDIR}")
 set(RE_INSTALL_SYSCONFDIR "${CMAKE_INSTALL_SYSCONFDIR}")
-set(RE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/res_embed")
-set(RE_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/res_embed")
-set(RE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/res_embed")
-set(RE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATADIR}/doc/res_embed")
+set(RE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+set(RE_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
+set(RE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
+set(RE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATADIR}/doc/${PROJECT_NAME}")
 set(RE_INSTALL_CMAKEDIR "${RE_INSTALL_DATADIR}/cmake")
 set(RE_INSTALL_3RDPARTYDIR "${RE_INSTALL_LIBDIR}/third_party")
 
 # ==============================================================================
 
 if(BUILD_SHARED_LIBS)
-  set(_tgt_name res_embed)
+  set(_tgt_name ${PROJECT_NAME})
   set(_alias_name res::embed)
   set(_tgt_defines)
 else()
-  set(_tgt_name res_embed_static)
+  set(_tgt_name ${PROJECT_NAME}_static)
   set(_alias_name res::embed::static)
-  set(_tgt_defines RES_EMBED_STATIC)
+  set(_tgt_defines ${PROJECT_NAME}_STATIC)
 endif()
 
 if(NOT TARGET ${_tgt_name})
-  add_library(${_tgt_name} ${CMAKE_CURRENT_SOURCE_DIR}/src/res_embed.cpp)
+  add_library(${_tgt_name} ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}.cpp)
   target_compile_features(${_tgt_name} PUBLIC cxx_std_11)
   set_property(TARGET ${_tgt_name} PROPERTY POSITION_INDEPENDENT_CODE ON)
   target_compile_definitions(${_tgt_name} PUBLIC ${_tgt_defines})
@@ -69,29 +69,29 @@ endif()
 
 include(CMakePackageConfigHelpers)
 
-set(_namespace res_embed::)
+set(_namespace ${PROJECT_NAME}::)
 
 configure_package_config_file(
-  ${CMAKE_CURRENT_LIST_DIR}/cmake/res_embedConfig.cmake.in
-  ${PROJECT_BINARY_DIR}/res_embedConfig.cmake
+  ${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
   INSTALL_DESTINATION ${RE_INSTALL_CMAKEDIR})
 
 write_basic_package_version_file(
-  ${PROJECT_BINARY_DIR}/res_embedConfigVersion.cmake
+  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
   COMPATIBILITY SameMajorVersion)
 
-install(FILES ${PROJECT_BINARY_DIR}/res_embedConfig.cmake
-              ${PROJECT_BINARY_DIR}/res_embedConfigVersion.cmake
+install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+              ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
         DESTINATION ${RE_INSTALL_CMAKEDIR})
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/cmake
         DESTINATION ${RE_INSTALL_CMAKEDIR})
 
 install(
-  FILES ${PROJECT_SOURCE_DIR}/include/res_embed.cpp.in
-        ${PROJECT_SOURCE_DIR}/include/res_embed.gas.in
-        ${PROJECT_SOURCE_DIR}/include/res_embed.h
-        ${PROJECT_SOURCE_DIR}/include/res_embed.nasm.in
+  FILES ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.cpp.in
+        ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.gas.in
+        ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.h
+        ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.nasm.in
   DESTINATION ${RE_INSTALL_INCLUDEDIR})
 
 # ==============================================================================
@@ -104,7 +104,7 @@ endif()
 
 install(
   TARGETS ${_tgt_name}
-  EXPORT res_embedTargets
+  EXPORT ${PROJECT_NAME}Targets
   PRIVATE_HEADER DESTINATION ${RE_INSTALL_INCLUDEDIR}
   PUBLIC_HEADER DESTINATION ${RE_INSTALL_INCLUDEDIR}
   ARCHIVE DESTINATION ${RE_INSTALL_LIBDIR}
@@ -112,7 +112,7 @@ install(
   RUNTIME DESTINATION ${RE_INSTALL_BINDIR})
 
 install(
-  EXPORT res_embedTargets
+  EXPORT ${PROJECT_NAME}Targets
   NAMESPACE ${_namespace}
   DESTINATION ${RE_INSTALL_CMAKEDIR})
 
