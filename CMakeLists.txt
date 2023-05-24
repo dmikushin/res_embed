@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.17 FATAL_ERROR) # CMAKE_CURRENT_FUNCTION_LIST_DIR
 
 project(
   res_embed
@@ -57,7 +57,7 @@ if(NOT TARGET ${_tgt_name})
   set_property(TARGET ${_tgt_name} PROPERTY POSITION_INDEPENDENT_CODE ON)
   target_compile_definitions(${_tgt_name} PUBLIC ${_tgt_defines})
   target_include_directories(
-    ${_tgt_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+    ${_tgt_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                         $<INSTALL_INTERFACE:${RE_INSTALL_INCLUDEDIR}>)
   add_library(${_alias_name} ALIAS ${_tgt_name})
   if(MSVC AND MSVC_ITERATOR_DEBUG)
