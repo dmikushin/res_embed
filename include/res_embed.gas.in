@@ -5,7 +5,7 @@
 
 @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@:
 .incbin "@FILE_PATH@"
-
+.byte 0
 .global @OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@
 
 @OS_DEPENDENT_PREFIX@hex_size_@FILE_KEY_HASH@:
