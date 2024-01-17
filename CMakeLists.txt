@@ -17,6 +17,8 @@ option(MSVC_ITERATOR_DEBUG "Define _ITERATOR_DEBUG_LEVEL (defaults to 0, can be 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+include(ResEmbed)
+
 # Only modify the parent's CMAKE_MODULE_PATH if it exists
 get_directory_property(has_parent PARENT_DIRECTORY)
 if(has_parent)
