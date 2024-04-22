@@ -24,7 +24,7 @@ public :
 	AddFile_@FILE_KEY_HASH@()
 	{
 		res::embed::add("@FILE_KEY@", reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
-			hex_size_@FILE_KEY_HASH@, STR(@FILE_MIME@));
+			static_cast<size_t>(hex_size_@FILE_KEY_HASH@), STR(@FILE_MIME@));
 	};
 };
 
@@ -41,7 +41,7 @@ namespace init {
 void @FILE_KEY@()
 {
 	res::embed::add("@FILE_KEY@", reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
-		hex_size_@FILE_KEY_HASH@, STR(@FILE_MIME@));
+		static_cast<size_t>(hex_size_@FILE_KEY_HASH@), STR(@FILE_MIME@));
 }
 
 } // namespace init
