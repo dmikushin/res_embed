@@ -6,7 +6,7 @@ project(
   LANGUAGES C CXX)
 
 option(BUILD_SHARED_LIBS
-       "Build and use shared library for ${PROJECT_NAME} (default: OFF)" OFF)
+       "Build and use shared library for ${PROJECT_NAME} (default: ON)" ON)
 
 option(BUILD_EXAMPLE "Build the examples (default: ON)" ON)
 

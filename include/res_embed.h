@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#if defined(_WIN32) && !defined(RES_EMBED_STATIC)
+#if defined(_WIN32) && !defined(res_embed_STATIC)
 #ifdef res_embed_EXPORTS
 #define RES_EMBED_API __declspec(dllexport)
 #else
