@@ -7,6 +7,7 @@ project(
 
 option(BUILD_SHARED_LIBS
        "Build and use shared library for ${PROJECT_NAME} (default: ON)" ON)
+set(RES_EMBED_USE_SHARED ${BUILD_SHARED_LIBS} PARENT_SCOPE)
 
 option(BUILD_EXAMPLE "Build the examples (default: ON)" ON)
 
