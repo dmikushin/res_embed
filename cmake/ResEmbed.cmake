@@ -71,7 +71,7 @@ function(res_embed)
 	endif()
 
 	get_target_property(LINKED_LIBRARIES ${RES_EMBED_TARGET} LINK_LIBRARIES)
-	if (RES_EMBED_USE_SHARED)
+	if (TARGET res::embed)
 		if (NOT ("res::embed" IN_LIST LINKED_LIBRARIES))
 			if (RES_EMBED_KEYWORD)
 				target_link_libraries(${RES_EMBED_TARGET} PRIVATE res::embed)
