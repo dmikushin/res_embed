@@ -16,6 +16,9 @@ git submodule add https://github.com/dmikushin/res_embed.git
 2. Integrate `res_embed` project into your `CMakeLists.txt`:
 
 ```cmake 
+# ResEmbed requires C and ASM languages in addtion to the C++ API:
+project(res_example LANGUAGES ASM C CXX)
+
 add_subdirectory(some/path/res_embed)
 ```
 
