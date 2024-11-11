@@ -1,4 +1,4 @@
-include(ResEmbed)
+project(res_example LANGUAGES ASM C CXX)
 
 if (NOT TARGET res_example)
 add_executable(res_example "example.cpp")
