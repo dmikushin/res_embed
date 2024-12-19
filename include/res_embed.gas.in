@@ -1,6 +1,6 @@
 # Embed content into hex array for in-memory caching
 
-.section .data
+.section @ASM_SECTION_DATA@
 .global @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@
 
 @OS_DEPENDENT_PREFIX@hex_content_@FILE_KEY_HASH@:
