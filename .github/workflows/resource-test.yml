@@ -29,10 +29,18 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential cmake nasm
         
-    - name: Install dependencies (Windows)
+    - name: Install NASM (official, Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install nasm
+        $url = "https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win64/nasm-2.16.03-win64.zip"
+        $out = "$env:RUNNER_TEMP\nasm.zip"
+        Invoke-WebRequest $url -OutFile $out
+        Expand-Archive $out -DestinationPath "C:\nasm"
+        $nasmDir = Get-ChildItem "C:\nasm" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
+        echo "Добавляю $nasmDir в PATH"
+        echo "$nasmDir" | Out-File -FilePath $env:GITHUB_PATH -Append
+        Get-ChildItem "$nasmDir"
+      shell: pwsh
         
     - name: Show versions
       run: |
@@ -43,7 +51,7 @@ jobs:
         cmake --version
         echo ""
         echo "=== NASM Version ==="
-        nasm -v
+        nasm.exe -v
         echo ""
         if [ "${{ runner.os }}" = "Linux" ]; then
           echo "=== GCC Version ==="
