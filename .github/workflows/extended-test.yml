@@ -1,0 +1,210 @@
+name: Extended Testing
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run weekly to catch any dependency issues
+    - cron: '0 0 * * 0'
+
+jobs:
+  test-matrix:
+    name: Test ${{ matrix.os }} with ${{ matrix.assembler }} (${{ matrix.build_type }})
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux configurations
+          - os: ubuntu-latest
+            assembler: "GNU AS"
+            use_nasm: "OFF"
+            build_type: "Debug"
+            install_cmd: "sudo apt-get update && sudo apt-get install -y build-essential cmake"
+          - os: ubuntu-latest
+            assembler: "GNU AS"
+            use_nasm: "OFF"
+            build_type: "Release"
+            install_cmd: "sudo apt-get update && sudo apt-get install -y build-essential cmake"
+          - os: ubuntu-latest
+            assembler: "NASM"
+            use_nasm: "ON"
+            build_type: "Debug"
+            install_cmd: "sudo apt-get update && sudo apt-get install -y build-essential cmake nasm"
+          - os: ubuntu-latest
+            assembler: "NASM"
+            use_nasm: "ON"
+            build_type: "Release"
+            install_cmd: "sudo apt-get update && sudo apt-get install -y build-essential cmake nasm"
+          
+          # Windows configurations
+          - os: windows-latest
+            assembler: "NASM"
+            use_nasm: "ON"
+            build_type: "Debug"
+            install_cmd: "choco install nasm"
+          - os: windows-latest
+            assembler: "NASM"
+            use_nasm: "ON"
+            build_type: "Release"
+            install_cmd: "choco install nasm"
+            
+          # macOS configurations
+          - os: macos-latest
+            assembler: "NASM"
+            use_nasm: "ON"
+            build_type: "Debug"
+            install_cmd: "brew install nasm"
+          - os: macos-latest
+            assembler: "NASM"
+            use_nasm: "ON"
+            build_type: "Release"
+            install_cmd: "brew install nasm"
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSVC (Windows only)
+      if: runner.os == 'Windows'
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Install dependencies
+      run: ${{ matrix.install_cmd }}
+      shell: bash
+      
+    - name: Configure CMake (Static library)
+      run: |
+        cmake -B build-static -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=OFF
+        
+    - name: Build (Static library)
+      run: |
+        cmake --build build-static --config ${{ matrix.build_type }}
+        
+    - name: Test static library example (Unix)
+      if: runner.os != 'Windows'
+      run: |
+        cd build-static/example
+        ./res_example
+        
+    - name: Test static library example (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd build-static/example/${{ matrix.build_type }}
+        ./res_example.exe
+        
+    - name: Configure CMake (Shared library)
+      run: |
+        cmake -B build-shared -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=ON
+        
+    - name: Build (Shared library)
+      run: |
+        cmake --build build-shared --config ${{ matrix.build_type }}
+        
+    - name: Test shared library example (Unix)
+      if: runner.os != 'Windows'
+      run: |
+        cd build-shared/example
+        ./res_example
+        
+    - name: Test shared library example (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd build-shared/example/${{ matrix.build_type }}
+        ./res_example.exe
+        
+    - name: Verify output consistency (Unix)
+      if: runner.os != 'Windows'
+      run: |
+        static_output=$(cd build-static/example && ./res_example)
+        shared_output=$(cd build-shared/example && ./res_example)
+        expected="Hello, world!"
+        
+        if [ "$static_output" != "$expected" ]; then
+          echo "Static library output mismatch: expected '$expected', got '$static_output'"
+          exit 1
+        fi
+        
+        if [ "$shared_output" != "$expected" ]; then
+          echo "Shared library output mismatch: expected '$expected', got '$shared_output'"
+          exit 1
+        fi
+        
+        if [ "$static_output" != "$shared_output" ]; then
+          echo "Static and shared library outputs differ: '$static_output' vs '$shared_output'"
+          exit 1
+        fi
+        
+        echo "✅ All tests passed: Output matches expected result"
+        
+    - name: Verify output consistency (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd build-static/example/${{ matrix.build_type }}
+        $static_output = .\res_example.exe
+        cd ../../../build-shared/example/${{ matrix.build_type }}
+        $shared_output = .\res_example.exe
+        $expected = "Hello, world!"
+        
+        if ($static_output -ne $expected) {
+          Write-Host "Static library output mismatch: expected '$expected', got '$static_output'"
+          exit 1
+        }
+        
+        if ($shared_output -ne $expected) {
+          Write-Host "Shared library output mismatch: expected '$expected', got '$shared_output'"
+          exit 1
+        }
+        
+        if ($static_output -ne $shared_output) {
+          Write-Host "Static and shared library outputs differ: '$static_output' vs '$shared_output'"
+          exit 1
+        }
+        
+        Write-Host "✅ All tests passed: Output matches expected result"
+
+  install-test:
+    name: Installation Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSVC (Windows only)
+      if: runner.os == 'Windows'
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Install dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake nasm
+        
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install nasm
+        
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install nasm
+        
+    - name: Configure and install
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
+        cmake --build build --config Release
+        cmake --install build --config Release
+        
+    - name: Verify installation
+      run: |
+        ls -la install/
+        find install/ -name "*.h" -o -name "*.cmake" -o -name "*.a" -o -name "*.lib" -o -name "*.so" -o -name "*.dll" | head -20
