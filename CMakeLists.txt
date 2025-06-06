@@ -17,6 +17,29 @@ option(MSVC_ITERATOR_DEBUG "Define _ITERATOR_DEBUG_LEVEL (defaults to 0, can be 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+if(NOT DEFINED USE_NASM)
+  if (MSVC OR APPLE)
+    if (NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+      set(USE_NASM TRUE)
+    endif()
+  else()
+    set(USE_NASM FALSE)
+  endif()
+endif()
+
+if (USE_NASM)
+  find_package(Nasm REQUIRED)
+  enable_language(ASM_NASM)
+  if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
+    message(FATAL_ERROR "NASM assembler not found, please install NASM")
+  endif()
+else()
+  enable_language(ASM)
+  if(NOT CMAKE_ASM_COMPILER_LOADED)
+    message(FATAL_ERROR "Assembler not found, please install it")
+  endif()
+endif()
+
 include(ResEmbed)
 
 # Only modify the parent's CMAKE_MODULE_PATH if it exists
