@@ -5,24 +5,16 @@
 
 using namespace std;
 
-namespace res {
-
-namespace embed {
-
 // Allow this function to be shadowed by another instance of the same
 // function loaded from another shared library. This way embedded resources
 // spanned across executable and libraries will use the same index.
-map<string, tuple<const char*, size_t, string> >& index()
+map<string, tuple<const char*, size_t, string> >& res::embed::index()
 {
     // Container for embedded content that shall be
     // loaded and persist in memory during the application lifetime.
     static map<string, tuple<const char*, size_t, string> > i;
     return i;
 }
-
-} // namespace embed
-
-} // namespace res
 
 void res::embed::add(const string& name, const char* content, size_t size, const string& mime)
 {
