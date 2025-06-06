@@ -20,6 +20,17 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential cmake nasm
         
+    - name: Show versions
+      run: |
+        echo "=== CMake Version ==="
+        cmake --version
+        echo "=== GCC Version ==="
+        gcc --version
+        echo "=== GNU AS Version ==="
+        as --version
+        echo "=== NASM Version ==="
+        nasm -v
+        
     - name: Test default example
       run: |
         cd example
@@ -74,6 +85,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential cmake
+        
+    - name: Show versions
+      run: |
+        echo "=== CMake Version ==="
+        cmake --version
+        echo "=== GCC Version ==="
+        gcc --version
+        echo "=== GNU AS Version ==="
+        as --version
         
     - name: Test as subdirectory
       run: |

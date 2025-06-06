@@ -76,6 +76,38 @@ jobs:
       run: ${{ matrix.install_cmd }}
       shell: bash
       
+    - name: Show versions
+      run: |
+        echo "=== System Information ==="
+        echo "OS: ${{ matrix.os }}"
+        echo "Assembler: ${{ matrix.assembler }}"
+        echo "Build Type: ${{ matrix.build_type }}"
+        echo ""
+        echo "=== CMake Version ==="
+        cmake --version
+        echo ""
+        if [ "${{ matrix.use_nasm }}" = "ON" ]; then
+          echo "=== NASM Version ==="
+          nasm -v
+          echo ""
+        fi
+        if [ "${{ runner.os }}" = "Linux" ]; then
+          echo "=== GCC Version ==="
+          gcc --version
+          if [ "${{ matrix.use_nasm }}" = "OFF" ]; then
+            echo ""
+            echo "=== GNU AS Version ==="
+            as --version
+          fi
+        elif [ "${{ runner.os }}" = "Windows" ]; then
+          echo "=== MSVC Version ==="
+          cl 2>&1 || true
+        elif [ "${{ runner.os }}" = "macOS" ]; then
+          echo "=== Clang Version ==="
+          clang --version
+        fi
+      shell: bash
+      
     - name: Configure CMake (Static library)
       run: |
         cmake -B build-static -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=OFF

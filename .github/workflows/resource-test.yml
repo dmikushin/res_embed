@@ -34,6 +34,26 @@ jobs:
       run: |
         choco install nasm
         
+    - name: Show versions
+      run: |
+        echo "=== System Information ==="
+        echo "OS: ${{ matrix.os }}"
+        echo ""
+        echo "=== CMake Version ==="
+        cmake --version
+        echo ""
+        echo "=== NASM Version ==="
+        nasm -v
+        echo ""
+        if [ "${{ runner.os }}" = "Linux" ]; then
+          echo "=== GCC Version ==="
+          gcc --version
+        elif [ "${{ runner.os }}" = "Windows" ]; then
+          echo "=== MSVC Version ==="
+          cl 2>&1 || true
+        fi
+      shell: bash
+        
     - name: Create test resources
       run: |
         mkdir -p test_resources
