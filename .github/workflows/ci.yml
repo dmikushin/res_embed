@@ -143,8 +143,8 @@ jobs:
         Write-Host "Test passed: Output matches expected result"
 
   test-macos-nasm:
-    name: macOS with NASM
-    runs-on: macos-latest
+    name: macOS with NASM (x86_64 only)
+    runs-on: macos-13  # Use Intel-based runner
     
     steps:
     - name: Checkout code
@@ -162,10 +162,51 @@ jobs:
         clang --version
         echo "=== NASM Version ==="
         nasm -v
+        echo "=== Architecture ==="
+        uname -m
         
     - name: Configure CMake (NASM)
       run: |
         cmake -B build -DUSE_NASM=ON -DCMAKE_BUILD_TYPE=Release
+        
+    - name: Build
+      run: |
+        cmake --build build --config Release
+        
+    - name: Test example
+      run: |
+        cd build/example
+        ./res_example
+        
+    - name: Verify output
+      run: |
+        output=$(cd build/example && ./res_example)
+        if [ "$output" != "Hello, world!" ]; then
+          echo "Expected 'Hello, world!' but got '$output'"
+          exit 1
+        fi
+        echo "Test passed: Output matches expected result"
+
+  test-macos-arm64-gas:
+    name: macOS ARM64 with GNU AS
+    runs-on: macos-latest  # ARM64 runner
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+        
+    - name: Show versions
+      run: |
+        echo "=== CMake Version ==="
+        cmake --version
+        echo "=== Clang Version ==="
+        clang --version
+        echo "=== Architecture ==="
+        uname -m
+        
+    - name: Configure CMake (Auto-detect - should use GNU AS on ARM64)
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release
         
     - name: Build
       run: |
