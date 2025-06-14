@@ -222,9 +222,9 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         cd build-static/example/${{ matrix.build_type }}
-        $static_output = .\res_example.exe
+        $static_output = (.\res_example.exe | Out-String).Trim()
         cd ../../../build-shared/example/${{ matrix.build_type }}
-        $shared_output = .\res_example.exe
+        $shared_output = (.\res_example.exe | Out-String).Trim()
         $expected = "Hello, world!"
         
         if ($static_output -ne $expected) {
@@ -298,7 +298,15 @@ jobs:
         cmake --build build --config Release
         cmake --install build --config Release
         
-    - name: Verify installation
+    - name: Verify installation (Unix)
+      if: runner.os != 'Windows'
       run: |
         ls -la install/
         find install/ -name "*.h" -o -name "*.cmake" -o -name "*.a" -o -name "*.lib" -o -name "*.so" -o -name "*.dll" | head -20
+        
+    - name: Verify installation (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        Get-ChildItem -Recurse install/ | Format-Table -AutoSize
+        Get-ChildItem -Recurse install/ -Include "*.h", "*.cmake", "*.a", "*.lib", "*.so", "*.dll" | Select-Object -First 20 | Format-Table Name, FullName -AutoSize
+      shell: pwsh

@@ -147,7 +147,7 @@ jobs:
     - name: Verify output
       run: |
         cd build\example\Release
-        $output = .\res_example.exe
+        $output = (.\res_example.exe | Out-String).Trim()
         if ($output -ne "Hello, world!") {
           Write-Host "Expected 'Hello, world!' but got '$output'"
           exit 1
