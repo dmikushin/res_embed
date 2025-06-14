@@ -45,24 +45,32 @@ jobs:
             assembler: "NASM"
             use_nasm: "ON"
             build_type: "Debug"
-            install_cmd: "choco install nasm"
+            install_cmd: ""
           - os: windows-latest
             assembler: "NASM"
             use_nasm: "ON"
             build_type: "Release"
-            install_cmd: "choco install nasm"
-            
-          # macOS configurations
-          - os: macos-latest
+            install_cmd: ""            # macOS configurations  
+          - os: macos-13  # Use Intel-based runner for NASM compatibility
             assembler: "NASM"
             use_nasm: "ON"
             build_type: "Debug"
             install_cmd: "brew install nasm"
-          - os: macos-latest
+          - os: macos-13  # Use Intel-based runner for NASM compatibility
             assembler: "NASM"
             use_nasm: "ON"
             build_type: "Release"
             install_cmd: "brew install nasm"
+          - os: macos-latest  # ARM64 runner
+            assembler: "GNU AS"
+            use_nasm: "OFF"
+            build_type: "Debug"
+            install_cmd: ""
+          - os: macos-latest  # ARM64 runner
+            assembler: "GNU AS"
+            use_nasm: "OFF"
+            build_type: "Release"
+            install_cmd: ""
     
     steps:
     - name: Checkout code
@@ -70,7 +78,7 @@ jobs:
       
     - name: Setup MSVC (Windows only)
       if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2
+      uses: ilammy/msvc-dev-cmd@v1
       
     - name: Install dependencies (Linux/macOS)
       if: runner.os != 'Windows'
@@ -89,6 +97,12 @@ jobs:
         echo "$nasmDir" | Out-File -FilePath $env:GITHUB_PATH -Append
         Get-ChildItem "$nasmDir"
       shell: pwsh
+
+    - name: Show NASM version (Windows)
+      if: runner.os == 'Windows' && matrix.use_nasm == 'ON'
+      run: nasm.exe -v
+      shell: pwsh
+        
     - name: Install dependencies (Windows)
       if: runner.os == 'Windows' && matrix.use_nasm != 'ON'
       run: ${{ matrix.install_cmd }}
@@ -106,25 +120,37 @@ jobs:
         echo "=== CMake Version ==="
         cmake --version
         echo ""
-        if [ "${{ matrix.use_nasm }}" = "ON" ]; then
-          echo "=== NASM Version ==="
-          nasm.exe -v
-          echo ""
-        fi
         if [ "${{ runner.os }}" = "Linux" ]; then
           echo "=== GCC Version ==="
           gcc --version
-          if [ "${{ matrix.use_nasm }}" = "OFF" ]; then
+          if [ "${{ matrix.use_nasm }}" = "ON" ]; then
+            echo ""
+            echo "=== NASM Version ==="
+            nasm -v
+          else
             echo ""
             echo "=== GNU AS Version ==="
             as --version
           fi
         elif [ "${{ runner.os }}" = "Windows" ]; then
           echo "=== MSVC Version ==="
-          cl 2>&1 || true
+          cl 2>&1 | findstr "Microsoft" || true
+          if [ "${{ matrix.use_nasm }}" = "ON" ]; then
+            echo ""
+            echo "=== NASM Version ==="
+            nasm -v
+          fi
         elif [ "${{ runner.os }}" = "macOS" ]; then
           echo "=== Clang Version ==="
           clang --version
+          echo ""
+          echo "=== Architecture ==="
+          uname -m
+          if [ "${{ matrix.use_nasm }}" = "ON" ]; then
+            echo ""
+            echo "=== NASM Version ==="
+            nasm -v
+          fi
         fi
       shell: bash
       
@@ -224,7 +250,10 @@ jobs:
     
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-13  # Use Intel-based runner for NASM compatibility
     
     steps:
     - name: Checkout code
@@ -232,7 +261,7 @@ jobs:
       
     - name: Setup MSVC (Windows only)
       if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2
+      uses: ilammy/msvc-dev-cmd@v1
       
     - name: Install dependencies (Linux)
       if: runner.os == 'Linux'
@@ -251,6 +280,11 @@ jobs:
         echo "Добавляю $nasmDir в PATH"
         echo "$nasmDir" | Out-File -FilePath $env:GITHUB_PATH -Append
         Get-ChildItem "$nasmDir"
+      shell: pwsh
+
+    - name: Show NASM version (Windows)
+      if: runner.os == 'Windows'
+      run: nasm.exe -v
       shell: pwsh
         
     - name: Install dependencies (macOS)
