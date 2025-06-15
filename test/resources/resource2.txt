@@ -1,0 +1,1 @@
+Test resource 2 with different content!

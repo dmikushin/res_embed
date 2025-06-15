@@ -70,175 +70,25 @@ jobs:
         fi
       shell: bash
         
-    - name: Create test resources (Unix)
-      if: runner.os != 'Windows'
-      run: |
-        mkdir -p test_resources
-        echo "Test resource 1" > test_resources/resource1.txt
-        echo "Test resource 2 with different content!" > test_resources/resource2.txt
-        printf "Binary data: \x00\x01\x02\x03\xFF" > test_resources/binary.dat
-      shell: bash
-        
-    - name: Create test resources (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        New-Item -ItemType Directory -Path "test_resources" -Force
-        "Test resource 1" | Out-File -FilePath "test_resources/resource1.txt" -Encoding UTF8
-        "Test resource 2 with different content!" | Out-File -FilePath "test_resources/resource2.txt" -Encoding UTF8
-        [byte[]]$binaryData = 0x00, 0x01, 0x02, 0x03, 0xFF
-        [System.IO.File]::WriteAllBytes("test_resources/binary.dat", $binaryData)
-      shell: pwsh
-        
-    - name: Create test application (Unix)
-      if: runner.os != 'Windows'
-      run: |
-        cat > test_app.cpp << 'EOF'
-        #include "res_embed.h"
-        #include <cstdio>
-        #include <cstring>
-        #include <iostream>
-        
-        int main() {
-            // Test text resource 1
-            const char* res1 = res::embed::get("resource1");
-            if (strcmp(res1, "Test resource 1\n") != 0) {
-                std::cerr << "Resource 1 mismatch" << std::endl;
-                return 1;
-            }
-            
-            // Test text resource 2
-            const char* res2 = res::embed::get("resource2");
-            if (strcmp(res2, "Test resource 2 with different content!\n") != 0) {
-                std::cerr << "Resource 2 mismatch" << std::endl;
-                return 1;
-            }
-            
-            // Test binary resource
-            const char* binary = res::embed::get("binary");
-            size_t binary_size = res::embed::size("binary");
-            if (binary_size != 5) {
-                std::cerr << "Binary resource size mismatch: expected 5, got " << binary_size << std::endl;
-                return 1;
-            }
-            
-            // Check binary content
-            unsigned char expected[] = {0x00, 0x01, 0x02, 0x03, 0xFF};
-            for (size_t i = 0; i < 5; i++) {
-                if ((unsigned char)binary[i] != expected[i]) {
-                    std::cerr << "Binary data mismatch at byte " << i << std::endl;
-                    return 1;
-                }
-            }
-            
-            std::cout << "All resource tests passed!" << std::endl;
-            return 0;
-        }
-        EOF
-      shell: bash
-        
-    - name: Create test application (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        @'
-        #include "res_embed.h"
-        #include <cstdio>
-        #include <cstring>
-        #include <iostream>
-        
-        int main() {
-            // Test text resource 1
-            const char* res1 = res::embed::get("resource1");
-            if (strcmp(res1, "Test resource 1\n") != 0) {
-                std::cerr << "Resource 1 mismatch" << std::endl;
-                return 1;
-            }
-            
-            // Test text resource 2
-            const char* res2 = res::embed::get("resource2");
-            if (strcmp(res2, "Test resource 2 with different content!\n") != 0) {
-                std::cerr << "Resource 2 mismatch" << std::endl;
-                return 1;
-            }
-            
-            // Test binary resource
-            const char* binary = res::embed::get("binary");
-            size_t binary_size = res::embed::size("binary");
-            if (binary_size != 5) {
-                std::cerr << "Binary resource size mismatch: expected 5, got " << binary_size << std::endl;
-                return 1;
-            }
-            
-            // Check binary content
-            unsigned char expected[] = {0x00, 0x01, 0x02, 0x03, 0xFF};
-            for (size_t i = 0; i < 5; i++) {
-                if ((unsigned char)binary[i] != expected[i]) {
-                    std::cerr << "Binary data mismatch at byte " << i << std::endl;
-                    return 1;
-                }
-            }
-            
-            std::cout << "All resource tests passed!" << std::endl;
-            return 0;
-        }
-        '@ | Out-File -FilePath "test_app.cpp" -Encoding UTF8
-      shell: pwsh
-        
-    - name: Create CMakeLists.txt for test (Unix)
-      if: runner.os != 'Windows'
-      run: |
-        cat > CMakeLists.txt << 'EOF'
-        cmake_minimum_required(VERSION 3.17)
-        project(resource_test LANGUAGES C CXX)
-        
-        # Add the res_embed subdirectory
-        add_subdirectory(. res_embed_build)
-        
-        # Create test executable
-        add_executable(resource_test test_app.cpp)
-        
-        # Embed multiple resources
-        res_embed(TARGET resource_test NAME "resource1" PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_resources/resource1.txt)
-        res_embed(TARGET resource_test NAME "resource2" PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_resources/resource2.txt)
-        res_embed(TARGET resource_test NAME "binary" PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_resources/binary.dat)
-        EOF
-      shell: bash
-        
-    - name: Create CMakeLists.txt for test (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        @'
-        cmake_minimum_required(VERSION 3.17)
-        project(resource_test LANGUAGES ASM C CXX)
-        
-        # Add the res_embed subdirectory
-        add_subdirectory(. res_embed_build)
-        
-        # Create test executable
-        add_executable(resource_test test_app.cpp)
-        
-        # Embed multiple resources
-        res_embed(TARGET resource_test NAME "resource1" PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_resources/resource1.txt)
-        res_embed(TARGET resource_test NAME "resource2" PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_resources/resource2.txt)
-        res_embed(TARGET resource_test NAME "binary" PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_resources/binary.dat)
-        '@ | Out-File -FilePath "CMakeLists.txt" -Encoding UTF8
-      shell: pwsh
         
     - name: Configure CMake
       run: |
+        cd test
         cmake -B build -DCMAKE_BUILD_TYPE=Release
         
     - name: Build
       run: |
+        cd test
         cmake --build build --config Release
         
     - name: Run test (Unix)
       if: runner.os != 'Windows'
       run: |
-        cd build
+        cd test/build
         ./resource_test
         
     - name: Run test (Windows)
       if: runner.os == 'Windows'
       run: |
-        cd build/Release
+        cd test/build/Release
         ./resource_test.exe
