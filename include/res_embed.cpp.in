@@ -39,7 +39,7 @@ namespace embed {
 
 namespace init {
 
-void @FILE_KEY@()
+void @FILE_KEY_IDENT@()
 {
 	res::embed::add("@FILE_KEY@", reinterpret_cast<const char*>(&hex_content_@FILE_KEY_HASH@[0]),
 		static_cast<size_t>(hex_size_@FILE_KEY_HASH@), STR(@FILE_MIME@));

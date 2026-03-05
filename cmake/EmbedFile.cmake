@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.17)
 
 string(SHA256 FILE_KEY_HASH ${FILE_KEY})
 
+# Create a C++ identifier-safe version of FILE_KEY for use as function name
+string(REGEX REPLACE "[^a-zA-Z0-9_]" "_" FILE_KEY_IDENT "${FILE_KEY}")
+
 find_program(XDG_MIME xdg-mime)
 if (XDG_MIME)
     execute_process(COMMAND ${XDG_MIME} query filetype ${FILE_PATH} OUTPUT_VARIABLE FILE_MIME)
