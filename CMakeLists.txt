@@ -55,6 +55,19 @@ else()
 endif()
 
 include(ResEmbed)
+include(CTest)
+
+if(BUILD_TESTING)
+  add_test(
+    NAME embed_file_script_mode
+    COMMAND
+      ${CMAKE_COMMAND}
+      -DCMAKE_CURRENT_INCLUDE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/include
+      -DFILE_KEY=script_mode_resource
+      -DFILE_PATH=${CMAKE_CURRENT_SOURCE_DIR}/example/resource
+      -DEMBED_FILE_PATH=${CMAKE_CURRENT_BINARY_DIR}/script_mode_resource.cpp
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/EmbedFile.cmake)
+endif()
 
 # Only modify the parent's CMAKE_MODULE_PATH if it exists
 get_directory_property(has_parent PARENT_DIRECTORY)

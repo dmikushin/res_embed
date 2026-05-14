@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
 
 string(SHA256 FILE_KEY_HASH ${FILE_KEY})
 
