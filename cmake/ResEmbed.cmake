@@ -11,6 +11,12 @@ function(res_embed)
 	set(_RES_EMBED_PATH ${CMAKE_CURRENT_FUNCTION_LIST_DIR})
 	set(RES_EMBED_CURRENT_INCLUDE_DIR ${_RES_EMBED_PATH}/../include)
 
+	# Sanitize the resource name for use as a CMake target name
+	string(REPLACE "/" "_" _SANITIZED_NAME "${RES_EMBED_NAME}")
+	string(REPLACE "." "_" _SANITIZED_NAME "${_SANITIZED_NAME}")
+	set(_RESOURCE_TARGET ${RES_EMBED_TARGET}_${_SANITIZED_NAME})
+	string(SHA256 _RESOURCE_HASH "${RES_EMBED_NAME}")
+
 	if (USE_NASM)
 		set(RES_EMBED_ASM_IN "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.nasm.in")
 		set(RES_EMBED_ASM_EXT ".nasm")
@@ -25,8 +31,17 @@ function(res_embed)
 		COMMENT "Adding file ${RES_EMBED_PATH}"
 		DEPENDS "${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed.cpp.in" "${RES_EMBED_PATH}")
 	set_source_files_properties("${EMBED_FILE_CPP_PATH}" PROPERTIES GENERATED TRUE)
-
 	target_sources(${RES_EMBED_TARGET} PRIVATE ${EMBED_FILE_CPP_PATH})
+
+	get_target_property(_RES_EMBED_TARGET_TYPE ${RES_EMBED_TARGET} TYPE)
+	if (_RES_EMBED_TARGET_TYPE STREQUAL "STATIC_LIBRARY")
+		set(RESOURCE_HASH "${_RESOURCE_HASH}")
+		set(_FORCE_INCLUDE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${_SANITIZED_NAME}_force_include.hpp")
+		configure_file("${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed_force_include.hpp.in" "${_FORCE_INCLUDE_PATH}" @ONLY)
+		target_compile_options(${RES_EMBED_TARGET} PRIVATE
+			"$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/FI${_FORCE_INCLUDE_PATH}>"
+			"$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-include;${_FORCE_INCLUDE_PATH}>")
+	endif()
 
 	set(EMBED_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}${RES_EMBED_ASM_EXT}")
 	add_custom_command(
@@ -44,21 +59,17 @@ function(res_embed)
 		set_source_files_properties("${EMBED_FILE_PATH}" PROPERTIES LANGUAGE ASM)
 	endif()
 
-	# Sanitize the resource name for use as a CMake target name
-	string(REPLACE "/" "_" _SANITIZED_NAME "${RES_EMBED_NAME}")
-	string(REPLACE "." "_" _SANITIZED_NAME "${_SANITIZED_NAME}")
-
 	# Submit the resulting source file for compilation
-	add_library(${RES_EMBED_TARGET}_${_SANITIZED_NAME} STATIC ${EMBED_FILE_PATH})
-	set_target_properties(${RES_EMBED_TARGET}_${_SANITIZED_NAME} PROPERTIES LINKER_LANGUAGE C)
+	add_library(${_RESOURCE_TARGET} STATIC ${EMBED_FILE_PATH})
+	set_target_properties(${_RESOURCE_TARGET} PROPERTIES LINKER_LANGUAGE C)
 
 	# Add the library output directory to target link directories
-	target_link_directories(${RES_EMBED_TARGET} PRIVATE $<TARGET_FILE_DIR:${RES_EMBED_TARGET}_${_SANITIZED_NAME}>)
+	target_link_directories(${RES_EMBED_TARGET} PRIVATE $<TARGET_FILE_DIR:${_RESOURCE_TARGET}>)
 
 	if (RES_EMBED_KEYWORD)
-		target_link_libraries(${RES_EMBED_TARGET} PRIVATE ${RES_EMBED_TARGET}_${_SANITIZED_NAME})
+		target_link_libraries(${RES_EMBED_TARGET} PRIVATE ${_RESOURCE_TARGET})
 	else()
-		target_link_libraries(${RES_EMBED_TARGET} ${RES_EMBED_TARGET}_${_SANITIZED_NAME})
+		target_link_libraries(${RES_EMBED_TARGET} ${_RESOURCE_TARGET})
 	endif()
 	if (RES_EMBED_DEPENDS)
 		add_dependencies(${RES_EMBED_TARGET} ${RES_EMBED_DEPENDS})

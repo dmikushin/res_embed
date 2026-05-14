@@ -1,0 +1,18 @@
+extern "C" void res_embed_anchor_@RESOURCE_HASH@();
+
+namespace {
+
+struct res_embed_force_@RESOURCE_HASH@
+{
+    res_embed_force_@RESOURCE_HASH@()
+    {
+        static volatile bool res_embed_never_call = false;
+        if (res_embed_never_call) {
+            res_embed_anchor_@RESOURCE_HASH@();
+        }
+    }
+};
+
+static res_embed_force_@RESOURCE_HASH@ res_embed_force_instance_@RESOURCE_HASH@;
+
+} // namespace

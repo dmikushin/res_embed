@@ -15,6 +15,7 @@ using namespace std;
 // Declare extern symbols OUTSIDE anonymous namespace for proper linkage
 extern "C" const char hex_content_@FILE_KEY_HASH@[];
 extern "C" const int hex_size_@FILE_KEY_HASH@;
+extern "C" void res_embed_anchor_@FILE_KEY_HASH@() {}
 
 namespace {
 

@@ -141,6 +141,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/cmake
 
 install(
   FILES ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.cpp.in
+        ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}_force_include.hpp.in
         ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.gas.in
         ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.h
         ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}.nasm.in
