@@ -157,7 +157,7 @@ jobs:
     - name: Configure CMake (Static library)
       run: |
         if [ "${{ runner.os }}" = "Windows" ]; then
-          cmake -B build-static -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 17 2022" -A x64 -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+          cmake -B build-static -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=OFF -G Ninja -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
         else
           cmake -B build-static -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=OFF
         fi
@@ -176,13 +176,13 @@ jobs:
     - name: Test static library example (Windows)
       if: runner.os == 'Windows'
       run: |
-        cd build-static/example/${{ matrix.build_type }}
+        cd build-static/example
         ./res_example.exe
         
     - name: Configure CMake (Shared library)
       run: |
         if [ "${{ runner.os }}" = "Windows" ]; then
-          cmake -B build-shared -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+          cmake -B build-shared -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=ON -G Ninja -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
         else
           cmake -B build-shared -DUSE_NASM=${{ matrix.use_nasm }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=ON
         fi
@@ -201,7 +201,7 @@ jobs:
     - name: Test shared library example (Windows)
       if: runner.os == 'Windows'
       run: |
-        cd build-shared/example/${{ matrix.build_type }}
+        cd build-shared/example
         ./res_example.exe
         
     - name: Verify output consistency (Unix)
@@ -231,9 +231,9 @@ jobs:
     - name: Verify output consistency (Windows)
       if: runner.os == 'Windows'
       run: |
-        cd build-static/example/${{ matrix.build_type }}
+        cd build-static/example
         $static_output = (.\res_example.exe | Out-String).Trim()
-        cd ../../../build-shared/example/${{ matrix.build_type }}
+        cd ../../build-shared/example
         $shared_output = (.\res_example.exe | Out-String).Trim()
         $expected = "Hello, world!"
         
@@ -305,7 +305,7 @@ jobs:
     - name: Configure and install
       run: |
         if [ "${{ runner.os }}" = "Windows" ]; then
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -G "Visual Studio 17 2022" -A x64 -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -G Ninja -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
         else
           cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
         fi

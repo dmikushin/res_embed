@@ -133,7 +133,7 @@ jobs:
         
     - name: Configure CMake (NASM)
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -A x64 -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
         
     - name: Build
       run: |
@@ -141,12 +141,12 @@ jobs:
         
     - name: Test example
       run: |
-        cd build\example\Release
+        cd build\example
         .\res_example.exe
         
     - name: Verify output
       run: |
-        cd build\example\Release
+        cd build\example
         $output = (.\res_example.exe | Out-String).Trim()
         if ($output -ne "Hello, world!") {
           Write-Host "Expected 'Hello, world!' but got '$output'"
