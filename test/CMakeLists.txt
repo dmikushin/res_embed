@@ -16,6 +16,7 @@ res_embed(TARGET resource_test NAME "binary" PATH ${CMAKE_CURRENT_SOURCE_DIR}/re
 add_library(static_resource_lib STATIC static_lib.cpp)
 target_include_directories(static_resource_lib PRIVATE ../include)
 res_embed(TARGET static_resource_lib NAME "static_resource" PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources/resource1.txt KEYWORD)
+res_embed(TARGET static_resource_lib NAME "static_resource_extra" PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources/resource2.txt KEYWORD)
 
 add_executable(static_resource_test static_main.cpp)
 target_link_libraries(static_resource_test PRIVATE static_resource_lib)
