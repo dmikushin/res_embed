@@ -40,7 +40,7 @@ function(res_embed)
 		configure_file("${RES_EMBED_CURRENT_INCLUDE_DIR}/res_embed_force_include.hpp.in" "${_FORCE_INCLUDE_PATH}" @ONLY)
 		target_compile_options(${RES_EMBED_TARGET} PRIVATE
 			"$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/FI${_FORCE_INCLUDE_PATH}>"
-			"$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-include;${_FORCE_INCLUDE_PATH}>")
+			"$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-include${_FORCE_INCLUDE_PATH}>")
 	endif()
 
 	set(EMBED_FILE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${RES_EMBED_NAME}${RES_EMBED_ASM_EXT}")
