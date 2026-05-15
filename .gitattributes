@@ -1,0 +1,3 @@
+example/resource text eol=lf
+test/resources/*.txt text eol=lf
+test/resources/*.dat binary
