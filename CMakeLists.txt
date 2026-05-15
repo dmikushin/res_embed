@@ -16,6 +16,7 @@ endif()
 option(MSVC_ITERATOR_DEBUG "Define _ITERATOR_DEBUG_LEVEL (defaults to 0, can be set using ITERATOR_DEBUG_VALUE)" OFF)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+get_directory_property(has_parent PARENT_DIRECTORY)
 
 if(NOT DEFINED USE_NASM)
   if (MSVC OR APPLE)
@@ -31,6 +32,8 @@ if(NOT DEFINED USE_NASM)
   endif()
 endif()
 
+set_property(GLOBAL PROPERTY RES_EMBED_USE_NASM ${USE_NASM})
+
 if (USE_NASM)
   if(NOT CMAKE_ASM_NASM_COMPILER)
     find_package(Nasm REQUIRED)
@@ -39,9 +42,10 @@ if (USE_NASM)
   if(NOT CMAKE_ASM_NASM_COMPILER)
     message(FATAL_ERROR "NASM assembler not found, please install NASM")
   endif()
-  # Propagate ASM_NASM language variables to parent scope
-  set(CMAKE_ASM_NASM_COMPILE_OBJECT "${CMAKE_ASM_NASM_COMPILE_OBJECT}" PARENT_SCOPE)
-  set(CMAKE_ASM_NASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" PARENT_SCOPE)
+  if(has_parent)
+    set(CMAKE_ASM_NASM_COMPILE_OBJECT "${CMAKE_ASM_NASM_COMPILE_OBJECT}" PARENT_SCOPE)
+    set(CMAKE_ASM_NASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" PARENT_SCOPE)
+  endif()
 else()
   if(NOT CMAKE_ASM_COMPILER)
     enable_language(ASM)
@@ -49,9 +53,10 @@ else()
   if(NOT CMAKE_ASM_COMPILER)
     message(FATAL_ERROR "Assembler not found, please install it")
   endif()
-  # Propagate ASM language variables to parent scope
-  set(CMAKE_ASM_COMPILE_OBJECT "${CMAKE_ASM_COMPILE_OBJECT}" PARENT_SCOPE)
-  set(CMAKE_ASM_COMPILER "${CMAKE_ASM_COMPILER}" PARENT_SCOPE)
+  if(has_parent)
+    set(CMAKE_ASM_COMPILE_OBJECT "${CMAKE_ASM_COMPILE_OBJECT}" PARENT_SCOPE)
+    set(CMAKE_ASM_COMPILER "${CMAKE_ASM_COMPILER}" PARENT_SCOPE)
+  endif()
 endif()
 
 include(ResEmbed)
@@ -70,7 +75,6 @@ if(BUILD_TESTING)
 endif()
 
 # Only modify the parent's CMAKE_MODULE_PATH if it exists
-get_directory_property(has_parent PARENT_DIRECTORY)
 if(has_parent)
   set(CMAKE_MODULE_PATH
       ${CMAKE_MODULE_PATH}
