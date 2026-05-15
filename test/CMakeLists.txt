@@ -21,6 +21,16 @@ res_embed(TARGET static_resource_lib NAME "static_resource_extra" PATH ${CMAKE_C
 add_executable(static_resource_test static_main.cpp)
 target_link_libraries(static_resource_test PRIVATE static_resource_lib)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  foreach(_test_target resource_test static_resource_test)
+    add_custom_command(TARGET ${_test_target} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      $<TARGET_FILE:res_embed>
+      $<TARGET_FILE_DIR:${_test_target}>
+      COMMENT "Copying res_embed DLL to ${_test_target} directory")
+  endforeach()
+endif()
+
 enable_testing()
 add_test(NAME resource_test COMMAND resource_test)
 add_test(NAME static_resource_test COMMAND static_resource_test)

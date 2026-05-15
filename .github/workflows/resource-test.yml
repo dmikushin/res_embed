@@ -86,14 +86,6 @@ jobs:
         cd test
         cmake --build build --config Release
         
-    - name: Run test (Unix)
-      if: runner.os != 'Windows'
+    - name: Run tests
       run: |
-        cd test/build
-        ./resource_test
-        
-    - name: Run test (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        cd test/build
-        ./resource_test.exe
+        ctest --test-dir test/build --output-on-failure
