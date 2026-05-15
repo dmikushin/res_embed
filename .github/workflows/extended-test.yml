@@ -51,12 +51,12 @@ jobs:
             use_nasm: "ON"
             build_type: "Release"
             install_cmd: ""            # macOS configurations  
-          - os: macos-13  # Use Intel-based runner for NASM compatibility
+          - os: macos-15-intel  # Use Intel-based runner for NASM compatibility
             assembler: "NASM"
             use_nasm: "ON"
             build_type: "Debug"
             install_cmd: "brew install nasm"
-          - os: macos-13  # Use Intel-based runner for NASM compatibility
+          - os: macos-15-intel  # Use Intel-based runner for NASM compatibility
             assembler: "NASM"
             use_nasm: "ON"
             build_type: "Release"
@@ -263,7 +263,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: windows-latest
-          - os: macos-13  # Use Intel-based runner for NASM compatibility
+          - os: macos-15-intel  # Use Intel-based runner for NASM compatibility
     
     steps:
     - name: Checkout code

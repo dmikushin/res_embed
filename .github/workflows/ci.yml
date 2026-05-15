@@ -156,7 +156,7 @@ jobs:
 
   test-macos-nasm:
     name: macOS with NASM (x86_64 only)
-    runs-on: macos-13  # Use Intel-based runner
+    runs-on: macos-15-intel  # Use Intel-based runner
     
     steps:
     - name: Checkout code
