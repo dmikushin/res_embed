@@ -1,4 +1,4 @@
-project(res_example LANGUAGES ASM C CXX)
+project(res_example LANGUAGES C CXX)
 
 if (NOT TARGET res_example)
 add_executable(res_example "example.cpp")
